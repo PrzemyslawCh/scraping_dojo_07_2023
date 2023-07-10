@@ -1,0 +1,7 @@
+.env
+output.jsonl
+__pycache__/
+env/
+*.pyc
+geckodriver.log
+check.py
