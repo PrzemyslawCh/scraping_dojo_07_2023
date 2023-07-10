@@ -1,7 +1,8 @@
-# Python built-in modules for OS interactions, JSON handling, and logging
+# Python built-in modules for OS interactions, JSON handling, normalizing text and logging
 import os
 import json
 import logging
+import unicodedata
 
 # Selenium is a web driver used to automate browser actions
 from selenium import webdriver
@@ -42,6 +43,20 @@ proxy.proxy_type = ProxyType.MANUAL
 proxy.http_proxy = PROXY
 proxy.ssl_proxy = PROXY
 
+# Define normalize_text function
+# def normalize_text(text):
+#         text = unicodedata.normalize('NFKD', text)  # normalize text
+#         text = text.encode('ascii', 'ignore')  # encode to ascii and ignore errors
+#         text = text.decode('utf-8', 'ignore')  # decode to utf-8
+#         return text
+def normalize_text(text):
+    text = unicodedata.normalize('NFKD', text)  # normalize text
+    text = text.encode('ascii', 'ignore')  # encode to ascii and ignore errors
+    text = text.decode('utf-8', 'ignore')  # decode to utf-8
+    return text
+
+
+
 # Scraper class encapsulates all the scraping operations
 class Scraper:
     def __init__(self, url, proxy):
@@ -65,7 +80,10 @@ class Scraper:
         for quote in quote_elements:
             # Get the text and author elements
             text = quote.find_element_by_class_name('text').text
+            text = normalize_text(text)
+            text = text.replace('“', '').replace('”', '')
             author = quote.find_element_by_class_name('author').text
+            author = normalize_text(author)
             # Get the tags associated with the quote
             tag_elements = quote.find_elements_by_class_name('tag')
             tags = [tag.text for tag in tag_elements]
@@ -96,6 +114,9 @@ class Scraper:
     # Method to close the browser once scraping is done
     def close_browser(self):
         self.driver.quit()
+
+   
+    
 
 # Main function where the program execution begins
 def main():
