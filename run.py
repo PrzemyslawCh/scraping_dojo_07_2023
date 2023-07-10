@@ -34,6 +34,7 @@ class Scraper:
         self.driver.get(url)
         self.seen_quotes = set()
 
+
     def get_quotes(self):
         WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.CLASS_NAME, "quote"))
@@ -42,6 +43,7 @@ class Scraper:
         quotes = []
         for quote in quote_elements:
             text = quote.find_element_by_class_name('text').text
+            text = text.replace('\u201c', '').replace('\u201d', '')  # added this line
             author = quote.find_element_by_class_name('author').text
             tag_elements = quote.find_elements_by_class_name('tag')
             tags = [tag.text for tag in tag_elements]
@@ -53,6 +55,7 @@ class Scraper:
                 self.seen_quotes.add(quote_json)
                 quotes.append(quote_dict)
         return quotes
+
 
     def go_to_next_page(self):
         try:
